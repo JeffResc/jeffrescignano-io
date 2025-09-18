@@ -1,0 +1,67 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import Header from "../../components/Header.astro";
+import Sidebar from "../../components/Sidebar.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<!DOCTYPE html>
+<html>
+  <Header title={`${post.data.title} | Jeff Rescignano`} />
+  <body>
+    <div class="content">
+      <Sidebar selectedItem="blog" />
+      <nav class="main">
+        <div class="container">
+          <div class="back-nav-container">
+            <a href="/blog" class="back-nav-button w-inline-block">
+              <img src="/assets/back.svg" loading="lazy" alt="" class="back-nav-img" />
+              <div>Back to Blog</div>
+            </a>
+          </div>
+          <div class="content-container">
+            <article class="blog-post-article">
+              <header class="blog-post-header">
+                <h1>{post.data.title}</h1>
+                <p class="description">{post.data.description}</p>
+                <div class="post-meta-info">
+                  <div class="mini-label-white gray-color">
+                    {post.data.pubDate.toDateString()}
+                    {post.data.updatedDate && (
+                      <span> • Updated: {post.data.updatedDate.toDateString()}</span>
+                    )}
+                  </div>
+                  {post.data.tags && (
+                    <div class="chips-container">
+                      {post.data.tags.map((tag) => (
+                        <div class="single-chip">{tag}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </header>
+              
+              <div class="blog-post-content">
+                <Content />
+              </div>
+            </article>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!--[if lte IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
+  </body>
+</html>

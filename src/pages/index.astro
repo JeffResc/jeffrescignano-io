@@ -1,0 +1,138 @@
+---
+import Header from "../components/Header.astro";
+import Sidebar from "../components/Sidebar.astro";
+---
+
+
+<!DOCTYPE html>
+<html
+>
+  <Header title="Jeff Rescignano" />
+  <body>
+    <div class="content">
+      <Sidebar selectedItem="home" />
+      <nav class="main">
+        <div class="container">
+          <main class="fold-content-container">
+            <div class="fold-content">
+              <h1>Hi, I'm Jeff.<br />I build <span id="rotating-text">things</span>.</h1>
+              <hr />
+            </div>
+          </main>
+        </div>
+      </nav>
+    </div>
+
+    <!--[if lte IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
+
+    <style>
+      #rotating-text {
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      #rotating-text.fade-out {
+        opacity: 0;
+      }
+
+      .current-obsessions {
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      #obsession-text {
+        transition: opacity 0.4s ease-in-out;
+        color: #333;
+        font-weight: 500;
+      }
+
+      #obsession-text.fade-out {
+        opacity: 0;
+      }
+
+      .fun-stats {
+        font-size: 0.9rem;
+      }
+
+      #commit-count {
+        font-weight: 500;
+      }
+    </style>
+
+    <script>
+      const words = ['things', 'platforms', 'solutions', 'systems', 'tools', 'infrastructure', 'automations', 'clusters', 'pipelines', 'workflows', 'services', 'applications', 'networks'];
+      let currentIndex = 0;
+      let rotatingInterval;
+
+      function setupRotatingText() {
+        const rotatingText = document.getElementById('rotating-text');
+        if (!rotatingText) return;
+
+        if (rotatingInterval) {
+          clearInterval(rotatingInterval);
+        }
+
+        function rotateText() {
+          rotatingText.classList.add('fade-out');
+
+          setTimeout(() => {
+            currentIndex = (currentIndex + 1) % words.length;
+            rotatingText.textContent = words[currentIndex];
+            rotatingText.classList.remove('fade-out');
+          }, 250);
+        }
+
+        rotatingInterval = setInterval(rotateText, 2500);
+      }
+
+      function cleanupRotatingText() {
+        if (rotatingInterval) {
+          clearInterval(rotatingInterval);
+          rotatingInterval = null;
+        }
+      }
+
+      // Fetch GitHub commit count
+      async function fetchCommitCount() {
+        try {
+          const currentYear = new Date().getFullYear();
+          const startDate = `${currentYear}-01-01`;
+          const endDate = `${currentYear}-12-31`;
+          const apiUrl = `https://api.github.com/search/commits?q=author:JeffResc+author-date:${startDate}..${endDate}`;
+
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+
+          if (data.total_count !== undefined) {
+            const commitCountEl = document.getElementById('commit-count');
+            if (commitCountEl) {
+              commitCountEl.textContent = data.total_count.toLocaleString();
+            }
+          }
+        } catch (error) {
+          console.log('Could not fetch commit count:', error);
+          const commitCountEl = document.getElementById('commit-count');
+          if (commitCountEl) {
+            commitCountEl.textContent = 'many';
+          }
+        }
+      }
+
+      function initializePage() {
+        setupRotatingText();
+        fetchCommitCount();
+      }
+
+      // Handle initial page load and Astro navigation
+      document.addEventListener('astro:page-load', initializePage);
+      document.addEventListener('astro:before-swap', cleanupRotatingText);
+
+      // Also run on initial load if not using Astro navigation
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializePage);
+      } else {
+        initializePage();
+      }
+    </script>
+  </body>
+</html>

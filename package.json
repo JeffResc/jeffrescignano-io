@@ -1,0 +1,24 @@
+{
+  "name": "jeffrescignano-io",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.8",
+    "@astrojs/mdx": "^4.3.5",
+    "@fortawesome/fontawesome-free": "^7.0.1",
+    "astro": "^5.1.5",
+    "wrangler": "^4.37.1"
+  },
+  "packageManager": "pnpm@10.16.1",
+  "devDependencies": {
+    "@astrojs/sitemap": "^3.6.0"
+  }
+}

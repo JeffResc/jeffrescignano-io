@@ -1,0 +1,24 @@
+{
+  "name": "jeffrescignano-io",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "routes": [
+    {
+      "pattern": "jeffrescignano.io",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.jeffrescignano.io",
+      "custom_domain": true
+    }
+  ],
+  "preview_urls": true
+}

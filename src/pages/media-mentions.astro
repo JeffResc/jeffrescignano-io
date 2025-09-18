@@ -1,0 +1,56 @@
+---
+import Header from "../components/Header.astro";
+import Sidebar from "../components/Sidebar.astro";
+---
+
+
+<!DOCTYPE html>
+<html
+>
+  <Header title="Media Mentions | Jeff Rescignano" />
+  <body>
+    <div class="content">
+      <Sidebar selectedItem="media-mentions" />
+      <nav class="main">
+        <div class="container">
+          <main class="fold-content-container">
+            <div class="fold-content">
+              <h1>Media Mentions</h1>
+            </div>
+          </main>
+          <div class="projects-section">
+            <a href="https://www.idownloadblog.com/2020/05/27/songshare/" class="projects-container">
+              <div class="single-projects-category">
+                <div class="projects-category-image-container">
+                  <img src="./assets/songshare.png" loading="lazy" alt="" class="projects-category-image" />
+                </div>
+              </div>
+              <div class="single-projects-content">
+                <h4>iDownloadBlog: SongShare (May 26, 2020)</h4>
+                <div class="mini-label-white gray-color">Article by Anthony Bouchard</div>
+                <p>
+                  SongShare is an iOS tweak that will automatically detect when you’ve copied a music URL to your clipboard and will automatically convert them to a SongLink.
+                </p>
+              </div>
+            </a>
+            <a href="https://www.idownloadblog.com/2019/03/20/meteoroid/" class="projects-container">
+              <div class="single-projects-category">
+                <div class="projects-category-image-container">
+                  <img src="./assets/meteoroid.png" loading="lazy" alt="" class="projects-category-image" />
+                </div>
+              </div>
+              <div class="single-projects-content">
+                <h4>iDownloadBlog: Meteoroid (March 19, 2019)</h4>
+                <div class="mini-label-white gray-color">Article by Anthony Bouchard</div>
+                <p>
+                  SongShare is an iOS tweak that will automatically set your wallpaper from various space related sources.
+                </p>
+              </div>
+            </a>
+        </div>
+      </nav>
+    </div>
+
+    <!--[if lte IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
+  </body>
+</html>
