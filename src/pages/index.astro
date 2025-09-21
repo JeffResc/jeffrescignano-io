@@ -1,14 +1,9 @@
 ---
-import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
 ---
 
-
-<!DOCTYPE html>
-<html
->
-  <Header title="Jeff Rescignano" />
-  <body>
+<Layout title="Jeff Rescignano">
     <div class="content">
       <Sidebar selectedItem="home" />
       <nav class="main">
@@ -83,5 +78,4 @@ import Sidebar from "../components/Sidebar.astro";
         initializePage();
       }
     </script>
-  </body>
-</html>
+</Layout>

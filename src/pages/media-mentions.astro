@@ -1,14 +1,9 @@
 ---
-import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
 ---
 
-
-<!DOCTYPE html>
-<html
->
-  <Header title="Media Mentions | Jeff Rescignano" />
-  <body>
+<Layout title="Media Mentions | Jeff Rescignano">
     <div class="content">
       <Sidebar selectedItem="media-mentions" />
       <nav class="main">
@@ -52,5 +47,4 @@ import Sidebar from "../components/Sidebar.astro";
     </div>
 
     <!--[if lte IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
-  </body>
-</html>
+</Layout>

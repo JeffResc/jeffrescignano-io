@@ -1,16 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
-import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
 
 const posts = await getCollection('blog');
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<!DOCTYPE html>
-<html>
-  <Header title="Blog | Jeff Rescignano" />
-  <body>
+<Layout title="Blog | Jeff Rescignano">
     <div class="content">
       <Sidebar selectedItem="blog" />
       <nav class="main">
@@ -57,5 +54,4 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
         </div>
       </nav>
     </div>
-  </body>
-</html>
+</Layout>
