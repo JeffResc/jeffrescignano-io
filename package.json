@@ -14,7 +14,7 @@
     "@astrojs/cloudflare": "^12.6.8",
     "@astrojs/mdx": "^5.0.0",
     "@fortawesome/fontawesome-free": "^7.0.1",
-    "astro": "^5.1.5",
+    "astro": "^6.0.0",
     "wrangler": "^4.37.1"
   },
   "packageManager": "pnpm@10.33.0",
