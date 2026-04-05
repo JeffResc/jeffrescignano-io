@@ -1,6 +1,5 @@
 {
   "name": "jeffrescignano-io",
-  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2025-09-17",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
