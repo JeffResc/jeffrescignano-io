@@ -1,0 +1,364 @@
+---
+title: "Cilium BGP Peering with a UniFi Gateway"
+pubDate: 'Apr 5 2026'
+description: "A step-by-step guide to advertising Kubernetes LoadBalancer IPs to your LAN using Cilium's BGP control plane and FRR on a UniFi Gateway."
+tags: ['kubernetes', 'cilium', 'bgp', 'unifi', 'networking', 'homelab']
+---
+
+If you're running a Kubernetes cluster at home with Cilium, you've probably wondered how to make your LoadBalancer services reachable from the rest of your network without port-forwarding hacks or external load balancers. The answer is BGP.
+
+One of the most common way to get LoadBalancer IPs working in a bare-metal cluster is MetalLB, which handles both IP allocation and BGP advertisement. Other options like kube-vip use ARP/NDP or BGP to advertise IPs as well. But if you're already running Cilium as your CNI, you don't need any of these; Cilium has a built-in BGP control plane that can handle IP pool allocation and route advertisement natively, keeping your networking stack consolidated in one place.
+
+In this guide, we'll set up eBGP peering between a Kubernetes cluster running Cilium and a UniFi Gateway. By the end, Cilium will advertise LoadBalancer IPs directly to your gateway, and any device on your LAN will be able to reach cluster services at those IPs.
+
+Here's what the setup looks like:
+
+- **UniFi Gateway** runs as BGP AS 65000
+- **Kubernetes cluster (Cilium)** runs as BGP AS 65001
+- Cilium advertises LoadBalancer IPs (`192.168.100.10–254`) to the gateway via eBGP
+- LAN clients reach cluster services at those IPs directly — no NAT, no proxy
+
+### Prerequisites
+
+- A Kubernetes cluster with Cilium installed as the CNI
+- A UniFi Gateway (UDM, UDM Pro, UDR, or USG)
+- SSH access to the UniFi Gateway
+- `kubectl` and the Cilium CLI installed on your workstation
+
+### Step 1: Enable Cilium BGP Control Plane
+
+First, make sure the BGP control plane is enabled in your Cilium installation. If you're using Helm, add these values:
+
+```yaml
+bgpControlPlane:
+  enabled: true
+kubeProxyReplacement: true
+```
+
+> **Note:** `kubeProxyReplacement` is not required for BGP to work, but it's recommended. It lets Cilium fully replace kube-proxy for service routing, which pairs well with BGP-advertised LoadBalancer IPs since Cilium handles the entire data path end to end.
+
+Then install or upgrade Cilium:
+
+```bash
+helm upgrade --install cilium cilium/cilium \
+  --namespace kube-system \
+  -f values.yaml
+```
+
+Wait for the Cilium pods to restart:
+
+```bash
+kubectl -n kube-system rollout status daemonset/cilium
+```
+
+### Step 2: Create a LoadBalancer IP Pool
+
+Cilium needs a pool of IPs to assign to `LoadBalancer` services. These IPs must be routable on your LAN — pick a range that doesn't overlap with DHCP or other static assignments.
+
+Create `ip-pool.yaml`:
+
+```yaml
+apiVersion: cilium.io/v2alpha1
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: pool
+spec:
+  blocks:
+    - start: "192.168.100.10"
+      stop: "192.168.100.254"
+```
+
+Apply it:
+
+```bash
+kubectl apply -f ip-pool.yaml
+```
+
+### Step 3: Configure Cilium BGP Resources
+
+We need three resources to tell Cilium how to advertise routes and peer with the gateway. Create `bgp.yaml` with all three:
+
+```yaml
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPAdvertisement
+metadata:
+  name: services
+  labels:
+    advertise: bgp
+spec:
+  advertisements:
+    - advertisementType: Service
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector: {}
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPPeerConfig
+metadata:
+  name: unifi
+spec:
+  ebgpMultihop: 1
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 15
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          advertise: bgp
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPClusterConfig
+metadata:
+  name: unifi
+spec:
+  bgpInstances:
+    - name: homelab
+      localASN: 65001
+      peers:
+        - name: unifi
+          peerASN: 65000
+          peerAddress: 192.168.0.1
+          peerConfigRef:
+            group: cilium.io
+            kind: CiliumBGPPeerConfig
+            name: unifi
+```
+
+Let's break down what each resource does:
+
+- **CiliumBGPAdvertisement** tells Cilium to advertise the LoadBalancer IPs of services. The empty `selector` means all LoadBalancer services are eligible.
+- **CiliumBGPPeerConfig** configures how Cilium behaves as a BGP peer — eBGP with a multihop of 1, graceful restart enabled, and IPv4 unicast with the advertisement selector matching our `advertise: bgp` label.
+- **CiliumBGPClusterConfig** ties it all together — our cluster is AS 65001, we peer with AS 65000 at `192.168.0.1` (the UniFi gateway's LAN IP), and we reference the peer config above.
+
+Apply everything:
+
+```bash
+kubectl apply -f bgp.yaml
+```
+
+### Step 4: Configure BGP on the UniFi Gateway
+
+As of UniFi Network 10.2.105, BGP configuration is available in the UI under **Policy Engine > Policy Table > Dynamic Routing > BGP**. The gateway runs FRR (Free Range Routing) under the hood, and the UI lets you upload a configuration file directly.
+
+First, create a file called `bgp.conf` with your FRR configuration. You'll need to add each of your cluster node IPs as a BGP neighbor. In this example, the nodes are at `192.168.0.21` through `192.168.0.26` — adjust these to match your cluster:
+
+```bash
+! -*- bgp -*-
+!
+hostname $UDMP_HOSTNAME
+password zebra
+frr defaults traditional
+log file stdout
+!
+router bgp 65000
+ bgp ebgp-requires-policy
+ bgp router-id 192.168.100.1
+ !
+ neighbor 192.168.0.21 remote-as 65001
+ neighbor 192.168.0.22 remote-as 65001
+ neighbor 192.168.0.23 remote-as 65001
+ neighbor 192.168.0.24 remote-as 65001
+ neighbor 192.168.0.25 remote-as 65001
+ neighbor 192.168.0.26 remote-as 65001
+ !
+ address-family ipv4 unicast
+  redistribute connected
+  redistribute static
+  neighbor 192.168.0.21 route-map ALLOW-ALL in
+  neighbor 192.168.0.21 route-map ALLOW-ALL out
+  neighbor 192.168.0.21 next-hop-self
+  neighbor 192.168.0.22 route-map ALLOW-ALL in
+  neighbor 192.168.0.22 route-map ALLOW-ALL out
+  neighbor 192.168.0.22 next-hop-self
+  neighbor 192.168.0.23 route-map ALLOW-ALL in
+  neighbor 192.168.0.23 route-map ALLOW-ALL out
+  neighbor 192.168.0.23 next-hop-self
+  neighbor 192.168.0.24 route-map ALLOW-ALL in
+  neighbor 192.168.0.24 route-map ALLOW-ALL out
+  neighbor 192.168.0.24 next-hop-self
+  neighbor 192.168.0.25 route-map ALLOW-ALL in
+  neighbor 192.168.0.25 route-map ALLOW-ALL out
+  neighbor 192.168.0.25 next-hop-self
+  neighbor 192.168.0.26 route-map ALLOW-ALL in
+  neighbor 192.168.0.26 route-map ALLOW-ALL out
+  neighbor 192.168.0.26 next-hop-self
+ exit-address-family
+!
+route-map ALLOW-ALL permit 10
+!
+line vty
+!
+```
+
+A few things to note:
+
+- The `router-id` is set to `192.168.100.1` — this should be a unique IP that identifies the router in BGP. It doesn't need to be a real interface IP.
+- `ebgp-requires-policy` means FRR won't accept or send routes without explicit route-maps, which is why we define the `ALLOW-ALL` route-map.
+- `redistribute connected` and `redistribute static` let the gateway share its own routes with the cluster if needed.
+- Each node needs three lines: `route-map ALLOW-ALL in`, `route-map ALLOW-ALL out`, and `next-hop-self`.
+
+Then in the UniFi Network UI, navigate to **Policy Engine > Policy Table > Dynamic Routing > BGP** and create a new BGP entry:
+
+- **Name:** give it a descriptive name (e.g. `talos-bgp`)
+- **Device:** select your gateway
+- **Configuration File:** upload the `bgp.conf` file you created above
+- **Override WAN Monitors:** leave this unchecked
+
+![UniFi BGP configuration menu](/assets/blog/cilium-bgp-peering-with-a-unifi-gateway/bgp-menu.png)
+
+### Step 5: Deploy a Test Service
+
+Let's deploy a simple nginx service to verify the whole pipeline works.
+
+Create `nginx-test.yaml`:
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-bgp-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-bgp-test
+  template:
+    metadata:
+      labels:
+        app: nginx-bgp-test
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-bgp-test
+  labels:
+    advertise: bgp
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx-bgp-test
+  ports:
+    - port: 80
+      targetPort: 80
+```
+
+Apply it:
+
+```bash
+kubectl apply -f nginx-test.yaml
+```
+
+Cilium will assign an IP from the pool and begin advertising it to the gateway via BGP.
+
+### Step 6: Verify Everything Works
+
+### Check BGP peering status
+
+```bash
+cilium bgp peers
+```
+
+You should see your gateway (`192.168.0.1`) listed as a peer with state `established`:
+
+```text
+Node            Local AS   Peer AS   Peer Address   Session State   Uptime    Family         Received   Advertised
+talos-cp-01     65001      65000     192.168.0.1    established     1h30m     ipv4/unicast   24         6
+talos-worker-01 65001      65000     192.168.0.1    established     1h30m     ipv4/unicast   24         6
+```
+
+### Check advertised routes
+
+```bash
+cilium bgp routes advertised ipv4 unicast
+```
+
+You should see each node advertising the LoadBalancer IPs to the gateway peer. Here's an abbreviated example showing two nodes:
+
+```text
+Node              VRouter   Peer          Prefix              NextHop        Age         Attrs
+talos-cp-01       65001     192.168.0.1   192.168.100.10/32   192.168.0.21   10h39m44s   [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.21}]
+                  65001     192.168.0.1   192.168.100.11/32   192.168.0.21   10h39m44s   [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.21}]
+                  65001     192.168.0.1   192.168.100.12/32   192.168.0.21   10h39m44s   [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.21}]
+talos-worker-01   65001     192.168.0.1   192.168.100.10/32   192.168.0.24   9h26m6s     [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.24}]
+                  65001     192.168.0.1   192.168.100.11/32   192.168.0.24   9h26m6s     [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.24}]
+                  65001     192.168.0.1   192.168.100.12/32   192.168.0.24   9h26m6s     [{Origin: i} {AsPath: 65001} {Nexthop: 192.168.0.24}]
+```
+
+Every node in the cluster advertises every LoadBalancer IP — this gives the gateway multiple paths to each service, providing redundancy if a node goes down.
+
+### Check the assigned service IP
+
+```bash
+kubectl get svc nginx-bgp-test
+```
+
+```text
+NAME             TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
+nginx-bgp-test   LoadBalancer   10.96.42.100   192.168.100.10   80:31234/TCP   2m
+```
+
+### Verify on the gateway
+
+SSH into the gateway and check the BGP summary to confirm all neighbors are up and exchanging prefixes:
+
+```bash
+vtysh -c "show bgp summary"
+```
+
+```text
+IPv4 Unicast Summary:
+BGP router identifier 192.168.100.1, local AS number 65000 VRF default vrf-id 0
+BGP table version 107
+RIB entries 41, using 5248 bytes of memory
+Peers 6, using 141 KiB of memory
+
+Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/PfxRcd   PfxSnt Desc
+192.168.0.21    4      65001     42757     42857      107    0    0 10:43:02            6       24 N/A
+192.168.0.24    4      65001     42760     42878      107    0    0 09:29:24            6       24 N/A
+...
+```
+
+The `State/PfxRcd` column shows the number of prefixes received from each node — a number here means the session is established. If you see `Active` or `Idle` instead, the peering hasn't come up yet.
+
+Then check the routing table to confirm the LoadBalancer IPs were learned via BGP:
+
+```bash
+vtysh -c "show ip route bgp"
+```
+
+```text
+B>* 192.168.100.10/32 [20/0] via 192.168.0.21, br10, weight 1, 09:29:19
+  *                          via 192.168.0.24, br10, weight 1, 09:29:19
+  *                          ...
+```
+
+Each LoadBalancer IP shows up as a `/32` route with ECMP paths via every cluster node — the gateway will load-balance traffic across all of them.
+
+### Reach the service from your LAN
+
+From any device on your network:
+
+```bash
+curl http://192.168.100.10
+```
+
+You should see the default nginx welcome page. Your LAN clients are now reaching the Kubernetes service directly via a BGP-advertised route — no port forwarding, no ingress controller, no external load balancer required.
+
+### Clean up the test
+
+Once you've verified everything works, remove the test deployment:
+
+```bash
+kubectl delete -f nginx-test.yaml
+```
