@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Projects | Jeff Rescignano" description="Open-source projects by Jeff Rescignano — Kubernetes operators, digital signage, IoT integrations, and more.">
+  <div class="content">
+    <Sidebar selectedItem="projects" />
+    <main class="main">
+      <div class="container">
+        <div class="content-container">
+          <h1>Projects</h1>
+
+          <div class="resouce-items">
+            <div class="project-card">
+              <div class="project-header">
+                <h3>authentik-k8s-operator</h3>
+                <a href="https://github.com/JeffResc/authentik-k8s-operator" class="project-link" target="_blank" rel="noopener noreferrer">
+                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
+                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                </a>
+              </div>
+              <p class="project-desc">
+                A Kubernetes operator for managing Authentik applications declaratively. Define OAuth2/OIDC apps as Custom Resources with automatic credential sync to Kubernetes secrets.
+              </p>
+              <div class="chips-container">
+                <div class="single-chip small-chip">Identity Management</div>
+                <div class="single-chip small-chip">Cloud Native</div>
+                <div class="single-chip small-chip">Kubernetes</div>
+                <div class="single-chip small-chip">Go</div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-header">
+                <h3>DisplayLoop</h3>
+                <a href="https://github.com/JeffResc/DisplayLoop" class="project-link" target="_blank" rel="noopener noreferrer">
+                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
+                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                </a>
+              </div>
+              <p class="project-desc">
+                A digital signage management system for controlling multiple screens with scheduled content playback. Features a web interface for managing displays, uploading media, and remote monitoring.
+              </p>
+              <div class="chips-container">
+                <div class="single-chip small-chip">Go</div>
+                <div class="single-chip small-chip">VLC</div>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-header">
+                <h3>hologram-mqtt</h3>
+                <a href="https://github.com/JeffResc/hologram-mqtt" class="project-link" target="_blank" rel="noopener noreferrer">
+                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
+                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                </a>
+              </div>
+              <p class="project-desc">
+                A bridge that integrates <a href="https://hologram.io" target="_blank" rel="noopener noreferrer">Hologram.io</a> cellular IoT devices with Home Assistant through MQTT auto-discovery, exposing devices as native Home Assistant entities.
+              </p>
+              <div class="chips-container">
+                <div class="single-chip small-chip">IoT</div>
+                <div class="single-chip small-chip">Home Automation</div>
+                <div class="single-chip small-chip">MQTT</div>
+                <div class="single-chip small-chip">Go</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </main>
+  </div>
+
+  <style>
+    .resouce-items {
+      gap: 24px;
+    }
+
+    .project-card {
+      background-color: #1c1c1c;
+      border: 1px solid #353535;
+      border-left: 4px solid #6366f1;
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .project-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .project-header h3 {
+      margin: 0;
+      color: #fff;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #6366f1;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background-color 0.2s ease;
+    }
+
+    .project-link:hover {
+      background: #5855eb;
+      color: white;
+    }
+
+    .project-link .fa-up-right-from-square {
+      font-size: 10px;
+    }
+
+    .project-card .project-desc {
+      margin-bottom: 16px;
+    }
+
+    .project-card .chips-container {
+      margin-top: 0;
+    }
+
+    @media (max-width: 768px) {
+      .project-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</Layout>

@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from "../components/Header.astro";
 import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
 
 // Fetch Credly badges
 let badges = [];
@@ -28,11 +28,10 @@ try {
 badges.sort((a, b) => new Date(b.issued_at) - new Date(a.issued_at));
 ---
 
-<Layout title="Certifications | Jeff Rescignano">
-  <Header title="Certifications | Jeff Rescignano" />
+<Layout title="Certifications | Jeff Rescignano" description="Professional certifications and digital badges earned by Jeff Rescignano, including cloud, DevOps, and infrastructure credentials.">
   <div class="content">
     <Sidebar selectedItem="certifications" />
-    <nav class="main">
+    <main class="main">
       <div class="container">
         <div class="content-container">
           <h1>Certifications</h1>
@@ -115,7 +114,8 @@ badges.sort((a, b) => new Date(b.issued_at) - new Date(a.issued_at));
           )}
         </div>
       </div>
-    </nav>
+      <Footer />
+    </main>
   </div>
 
   <style>

@@ -2,24 +2,24 @@
 import { getCollection } from 'astro:content';
 import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
 
 const posts = await getCollection('blog');
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<Layout title="Blog | Jeff Rescignano">
+<Layout title="Blog | Jeff Rescignano" description="Blog posts by Jeff Rescignano on platform engineering, Kubernetes, home automation, and cloud-native tooling.">
     <div class="content">
       <Sidebar selectedItem="blog" />
-      <nav class="main">
+      <main class="main">
         <div class="container">
-          <div class="back-nav-container">
-            <a href="/" class="back-nav-button w-inline-block">
-              <img src="/assets/back.svg" loading="lazy" alt="" class="back-nav-img" />
-              <div>Back</div>
-            </a>
-          </div>
           <div class="content-container">
-            <h1>Blog</h1>
+            <div class="blog-header">
+              <h1>Blog</h1>
+              <a href="/rss.xml" class="rss-link" target="_blank" rel="noopener noreferrer" aria-label="RSS Feed">
+                <i class="fas fa-rss" aria-hidden="true"></i> RSS
+              </a>
+            </div>
             <section class="items-container">
               <div class="resouce-items">
                 {sortedPosts.map((post) => (
@@ -52,6 +52,38 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
             </section>
           </div>
         </div>
-      </nav>
+        <Footer />
+      </main>
     </div>
+
+    <style>
+      .blog-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .blog-header h1 {
+        margin-bottom: 0;
+      }
+
+      .rss-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        color: #a8a8a8;
+        border: 1px solid #353535;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.15s ease, border-color 0.15s ease;
+      }
+
+      .rss-link:hover {
+        color: #fff;
+        border-color: #555;
+      }
+    </style>
 </Layout>

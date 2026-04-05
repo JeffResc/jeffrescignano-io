@@ -47,6 +47,15 @@ const { selectedItem } = Astro.props;
         <div>Blog</div>
       </a>
       <a
+        href="/projects"
+        class={`nav-link-container w-inline-block ${
+          selectedItem === 'projects' ? 'w--current' : ''
+        }`}
+      >
+        <i class="fas fa-code nav-link-image" aria-hidden="true"></i>
+        <div>Projects</div>
+      </a>
+      <a
         href="/media-mentions"
         class={`nav-link-container w-inline-block ${
           selectedItem === 'media-mentions' ? 'w--current' : ''

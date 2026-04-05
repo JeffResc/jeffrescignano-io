@@ -1,24 +1,77 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
+
+const personJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: 'Jeff Rescignano',
+	url: 'https://jeffrescignano.io',
+	jobTitle: 'Platform Engineer',
+	description: 'Platform Engineer focused on building tools and infrastructure that help teams ship code easier and faster.',
+	knowsAbout: ['Kubernetes', 'Docker', 'Helm', 'Terraform', 'GitHub Actions', 'ArgoCD', 'Go', 'AWS', 'Azure', 'Cloudflare'],
+};
 ---
 
-<Layout title="Jeff Rescignano">
+<Layout
+	title="Jeff Rescignano"
+	description="Jeff Rescignano - Platform Engineer focused on building tools and infrastructure that help teams ship code easier and faster. Kubernetes, CI/CD, and cloud-native tooling."
+	jsonLd={personJsonLd}
+>
     <div class="content">
       <Sidebar selectedItem="home" />
-      <nav class="main">
+      <main class="main">
         <div class="container">
-          <main class="fold-content-container">
+          <div class="fold-content-container">
             <div class="fold-content">
               <h1>Hi, I'm Jeff.<br />I build <span id="rotating-text">things</span>.</h1>
               <hr />
             </div>
-          </main>
+          </div>
+          <div class="projects-section">
+            <div>
+              <div class="mini-label-white gray-color">About</div>
+              <p class="lead">
+                I'm a Platform Engineer focused on building tools and infrastructure
+                that help teams ship code easier and faster. Day to day, that means
+                working across Kubernetes, CI/CD pipelines, and cloud-native tooling
+                to reduce friction between writing code and running it in production.
+              </p>
+            </div>
+            <div>
+              <div class="mini-label-white gray-color">Tech Stack</div>
+              <div class="stack-grid">
+                <span class="stack-tag">Kubernetes</span>
+                <span class="stack-tag">Docker</span>
+                <span class="stack-tag">Talos Linux</span>
+                <span class="stack-tag">Proxmox</span>
+                <span class="stack-tag">Linux</span>
+                <span class="stack-tag">Cilium</span>
+                <span class="stack-tag">Istio</span>
+                <span class="stack-tag">Helm</span>
+                <span class="stack-tag">Terraform/OpenTofu</span>
+                <span class="stack-tag">Crossplane</span>
+                <span class="stack-tag">Atmos</span>
+                <span class="stack-tag">Ansible</span>
+                <span class="stack-tag">ArgoCD</span>
+                <span class="stack-tag">GitHub Actions</span>
+                <span class="stack-tag">Prometheus</span>
+                <span class="stack-tag">Grafana</span>
+                <span class="stack-tag">Loki</span>
+                <span class="stack-tag">Go</span>
+                <span class="stack-tag">AWS</span>
+                <span class="stack-tag">Azure</span>
+                <span class="stack-tag">Cloudflare</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </nav>
+        <Footer />
+      </main>
     </div>
 
-    <!--[if lte IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif]-->
+
 
     <style>
       #rotating-text {
@@ -27,6 +80,28 @@ import Sidebar from "../components/Sidebar.astro";
 
       #rotating-text.fade-out {
         opacity: 0;
+      }
+
+      .container {
+        gap: 0;
+      }
+
+      .stack-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .stack-tag {
+        color: #fff;
+        background-color: #252525;
+        border: 1px solid #353535;
+        border-radius: 6px;
+        padding: 4px 12px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px;
+        line-height: 22px;
       }
     </style>
 

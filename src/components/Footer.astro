@@ -1,0 +1,37 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <p>&copy; 2019–{currentYear} Jeff Rescignano</p>
+  <p>Made with <span class="heart">&hearts;</span> using <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a></p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding: 24px 0;
+    text-align: center;
+  }
+
+  .site-footer p {
+    color: #6b6b6b;
+    font-size: 13px;
+    line-height: 20px;
+    margin: 0;
+  }
+
+  .site-footer a {
+    color: #6b6b6b;
+    text-decoration: underline;
+    transition: color 0.15s ease;
+  }
+
+  .site-footer a:hover {
+    color: #a8a8a8;
+  }
+
+  .heart {
+    color: #e25555;
+  }
+</style>
