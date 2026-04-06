@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Page Not Found | Jeff Rescignano" description="The page you're looking for doesn't exist.">
+    <div class="content">
+      <Sidebar />
+      <main class="main">
+        <div class="container">
+          <div class="not-found">
+            <h1>404</h1>
+            <p>The page you're looking for doesn't exist.</p>
+            <a href="/" class="home-link">Go back home</a>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    </div>
+
+    <style>
+      .not-found {
+        text-align: center;
+        padding: 80px 0;
+      }
+
+      .not-found h1 {
+        font-size: 96px;
+        line-height: 1;
+        margin-bottom: 16px;
+        font-weight: 600;
+        letter-spacing: -2px;
+      }
+
+      .not-found p {
+        font-size: 18px;
+        margin-bottom: 32px;
+      }
+
+      .home-link {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #6366f1;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+      }
+
+      .home-link:hover {
+        background: #5855eb;
+        color: white;
+      }
+    </style>
+</Layout>
