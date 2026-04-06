@@ -21,12 +21,14 @@ const allPosts = await getCollection('blog');
 const currentTags = post.data.tags || [];
 
 // Score other posts by number of shared tags, then sort by score (desc) and date (desc)
+// Only show posts that share at least one tag to keep recommendations relevant
 const similarPosts = allPosts
   .filter((p) => p.id !== post.id)
   .map((p) => {
     const sharedTags = (p.data.tags || []).filter((t) => currentTags.includes(t));
     return { post: p, score: sharedTags.length };
   })
+  .filter((entry) => entry.score > 0)
   .sort((a, b) => b.score - a.score || b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf())
   .slice(0, 3)
   .map((entry) => entry.post);
