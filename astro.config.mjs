@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
 
 import cloudflare from '@astrojs/cloudflare';
 
@@ -8,7 +9,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://jeffrescignano.io',
   base: '/',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap(), icon()],
   adapter: cloudflare(),
   output: 'static',
 });

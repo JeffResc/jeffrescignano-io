@@ -1,4 +1,6 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 const { selectedItem } = Astro.props;
 ---
 
@@ -34,7 +36,7 @@ const { selectedItem } = Astro.props;
           selectedItem === 'home' ? 'w--current' : ''
         }`}
       >
-        <i class="fas fa-home nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:house" class="nav-link-icon" />
         <div>Home</div>
       </a>
       <a
@@ -43,7 +45,7 @@ const { selectedItem } = Astro.props;
           selectedItem === 'blog' ? 'w--current' : ''
         }`}
       >
-        <i class="fas fa-feather-pointed nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:feather-pointed" class="nav-link-icon" />
         <div>Blog</div>
       </a>
       <a
@@ -52,7 +54,7 @@ const { selectedItem } = Astro.props;
           selectedItem === 'projects' ? 'w--current' : ''
         }`}
       >
-        <i class="fas fa-code nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:code" class="nav-link-icon" />
         <div>Projects</div>
       </a>
       <a
@@ -61,7 +63,7 @@ const { selectedItem } = Astro.props;
           selectedItem === 'media-mentions' ? 'w--current' : ''
         }`}
       >
-        <i class="fas fa-newspaper nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:newspaper" class="nav-link-icon" />
         <div>Media Mentions</div>
       </a>
       <a
@@ -70,7 +72,7 @@ const { selectedItem } = Astro.props;
           selectedItem === 'certifications' ? 'w--current' : ''
         }`}
       >
-        <i class="fas fa-certificate nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:certificate" class="nav-link-icon" />
         <div>Certifications</div>
       </a>
       <a
@@ -79,9 +81,9 @@ const { selectedItem } = Astro.props;
         target="_blank"
         rel="noopener noreferrer"
       >
-        <i class="fas fa-brands fa-github nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-brands:github" class="nav-link-icon" />
         <div>GitHub</div>
-        <i class="fa-solid fa-up-right-from-square nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:up-right-from-square" class="nav-link-icon" />
       </a>
       <a
         href="https://www.linkedin.com/in/jeffrey-rescignano/"
@@ -89,9 +91,9 @@ const { selectedItem } = Astro.props;
         target="_blank"
         rel="noopener noreferrer"
       >
-        <i class="fas fa-brands fa-linkedin nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-brands:linkedin" class="nav-link-icon" />
         <div>LinkedIn</div>
-        <i class="fa-solid fa-up-right-from-square nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:up-right-from-square" class="nav-link-icon" />
       </a>
       <a
         href="https://charts.jeffresc.dev/"
@@ -99,9 +101,9 @@ const { selectedItem } = Astro.props;
         target="_blank"
         rel="noopener noreferrer"
       >
-        <i class="fas fa-anchor nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:anchor" class="nav-link-icon" />
         <div>Helm Charts</div>
-        <i class="fa-solid fa-up-right-from-square nav-link-image" aria-hidden="true"></i>
+        <Icon name="fa6-solid:up-right-from-square" class="nav-link-icon" />
       </a>
     </nav>
 
@@ -112,14 +114,23 @@ const { selectedItem } = Astro.props;
       role="button"
       tabindex="0"
     >
-      <i class="fas fa-bars navbar-icon" aria-hidden="true"></i>
+      <Icon name="fa6-solid:bars" class="navbar-icon" />
     </div>
   </div>
 
+  <style>
+    .nav-link-icon {
+      width: 24px;
+      height: 24px;
+      opacity: 0.48;
+      flex-shrink: 0;
+    }
+  </style>
+
   <script>
     import { setupNav } from '../scripts/nav.js';
-    
-    let cleanup;
+
+    let cleanup: (() => void) | undefined;
     document.addEventListener('astro:page-load', () => {
       if (cleanup) cleanup();
       cleanup = setupNav();
