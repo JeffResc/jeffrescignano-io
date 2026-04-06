@@ -2,6 +2,41 @@
 import Layout from '../layouts/Layout.astro';
 import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
+
+const featuredRepos = [
+  { name: 'authentik-k8s-operator', owner: 'JeffResc', tags: ['Identity Management', 'Cloud Native', 'Kubernetes', 'Go'] },
+  { name: 'DisplayLoop', owner: 'JeffResc', tags: ['Go', 'VLC'] },
+  { name: 'hologram-mqtt', owner: 'JeffResc', tags: ['IoT', 'Home Automation', 'MQTT', 'Go'] },
+];
+
+const projects = await Promise.all(
+  featuredRepos.map(async (repo) => {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}`, {
+        headers: { 'Accept': 'application/vnd.github.v3+json' },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          name: data.name,
+          description: data.description,
+          url: data.html_url,
+          stars: data.stargazers_count,
+          language: data.language,
+          tags: repo.tags,
+        };
+      }
+    } catch {}
+    return {
+      name: repo.name,
+      description: '',
+      url: `https://github.com/${repo.owner}/${repo.name}`,
+      stars: 0,
+      language: null,
+      tags: repo.tags,
+    };
+  })
+);
 ---
 
 <Layout title="Projects | Jeff Rescignano" description="Open-source projects by Jeff Rescignano — Kubernetes operators, digital signage, IoT integrations, and more.">
@@ -13,60 +48,31 @@ import Footer from "../components/Footer.astro";
           <h1>Projects</h1>
 
           <div class="resouce-items">
-            <div class="project-card">
-              <div class="project-header">
-                <h3>authentik-k8s-operator</h3>
-                <a href="https://github.com/JeffResc/authentik-k8s-operator" class="project-link" target="_blank" rel="noopener noreferrer">
-                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
-                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                </a>
+            {projects.map((project) => (
+              <div class="project-card">
+                <div class="project-header">
+                  <h3>{project.name}</h3>
+                  <div class="project-header-right">
+                    {project.stars > 0 && (
+                      <span class="star-count">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="star-icon"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" /></svg>
+                        {project.stars}
+                      </span>
+                    )}
+                    <a href={project.url} class="project-link" target="_blank" rel="noopener noreferrer">
+                      GitHub
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="external-icon"><path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3.25a.75.75 0 0 0 0 1.5h2.94l-5.72 5.72a.75.75 0 1 0 1.06 1.06l5.72-5.72v2.94a.75.75 0 0 0 1.5 0v-5a.75.75 0 0 0-.75-.75h-5Z" clip-rule="evenodd" /></svg>
+                    </a>
+                  </div>
+                </div>
+                <p class="project-desc">{project.description}</p>
+                <div class="chips-container">
+                  {project.tags.map((tag) => (
+                    <div class="single-chip small-chip">{tag}</div>
+                  ))}
+                </div>
               </div>
-              <p class="project-desc">
-                A Kubernetes operator for managing Authentik applications declaratively. Define OAuth2/OIDC apps as Custom Resources with automatic credential sync to Kubernetes secrets.
-              </p>
-              <div class="chips-container">
-                <div class="single-chip small-chip">Identity Management</div>
-                <div class="single-chip small-chip">Cloud Native</div>
-                <div class="single-chip small-chip">Kubernetes</div>
-                <div class="single-chip small-chip">Go</div>
-              </div>
-            </div>
-
-            <div class="project-card">
-              <div class="project-header">
-                <h3>DisplayLoop</h3>
-                <a href="https://github.com/JeffResc/DisplayLoop" class="project-link" target="_blank" rel="noopener noreferrer">
-                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
-                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                </a>
-              </div>
-              <p class="project-desc">
-                A digital signage management system for controlling multiple screens with scheduled content playback. Features a web interface for managing displays, uploading media, and remote monitoring.
-              </p>
-              <div class="chips-container">
-                <div class="single-chip small-chip">Go</div>
-                <div class="single-chip small-chip">VLC</div>
-              </div>
-            </div>
-
-            <div class="project-card">
-              <div class="project-header">
-                <h3>hologram-mqtt</h3>
-                <a href="https://github.com/JeffResc/hologram-mqtt" class="project-link" target="_blank" rel="noopener noreferrer">
-                  <i class="fa-brands fa-github" aria-hidden="true"></i> GitHub
-                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                </a>
-              </div>
-              <p class="project-desc">
-                A bridge that integrates <a href="https://hologram.io" target="_blank" rel="noopener noreferrer">Hologram.io</a> cellular IoT devices with Home Assistant through MQTT auto-discovery, exposing devices as native Home Assistant entities.
-              </p>
-              <div class="chips-container">
-                <div class="single-chip small-chip">IoT</div>
-                <div class="single-chip small-chip">Home Automation</div>
-                <div class="single-chip small-chip">MQTT</div>
-                <div class="single-chip small-chip">Go</div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -102,6 +108,27 @@ import Footer from "../components/Footer.astro";
       font-size: 18px;
     }
 
+    .project-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .star-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #a8a8a8;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .star-icon {
+      width: 14px;
+      height: 14px;
+      color: #f59e0b;
+    }
+
     .project-link {
       display: inline-flex;
       align-items: center;
@@ -122,8 +149,9 @@ import Footer from "../components/Footer.astro";
       color: white;
     }
 
-    .project-link .fa-up-right-from-square {
-      font-size: 10px;
+    .external-icon {
+      width: 12px;
+      height: 12px;
     }
 
     .project-card .project-desc {
