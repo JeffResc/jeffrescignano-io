@@ -13,9 +13,21 @@ function getReadingTime(body: string | undefined): number {
   const wordCount = plainText.split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(wordCount / 225));
 }
+
+const blogListJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Blog Posts',
+  itemListElement: sortedPosts.map((post, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: new URL(`/blog/${post.id}/`, 'https://jeffrescignano.io').href,
+    name: post.data.title,
+  })),
+};
 ---
 
-<Layout title="Blog | Jeff Rescignano" description="Blog posts by Jeff Rescignano on platform engineering, Kubernetes, home automation, and cloud-native tooling.">
+<Layout title="Blog | Jeff Rescignano" description="Blog posts by Jeff Rescignano on platform engineering, Kubernetes, home automation, and cloud-native tooling." jsonLd={blogListJsonLd}>
     <div class="content">
       <Sidebar selectedItem="blog" />
       <main class="main">
