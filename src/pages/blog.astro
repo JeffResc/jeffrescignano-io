@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
 import Layout from "../layouts/Layout.astro";
 import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
@@ -23,7 +24,7 @@ function getReadingTime(body: string | undefined): number {
             <div class="blog-header">
               <h1>Blog</h1>
               <a href="/rss.xml" class="rss-link" target="_blank" rel="noopener noreferrer" aria-label="RSS Feed">
-                <i class="fas fa-rss" aria-hidden="true"></i> RSS
+                <Icon name="fa6-solid:rss" class="rss-icon" /> RSS
               </a>
             </div>
             <section class="items-container">
@@ -90,6 +91,11 @@ function getReadingTime(body: string | undefined): number {
       .rss-link:hover {
         color: #fff;
         border-color: #555;
+      }
+
+      .rss-icon {
+        width: 14px;
+        height: 14px;
       }
     </style>
 </Layout>

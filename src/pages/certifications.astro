@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Layout from '../layouts/Layout.astro';
 import Sidebar from "../components/Sidebar.astro";
 import Footer from "../components/Footer.astro";
@@ -98,7 +99,7 @@ badges.sort((a, b) => new Date(b.issued_at) - new Date(a.issued_at));
                             class="verify-button"
                           >
                             Verify
-                            <i class="fa-solid fa-external-link" aria-hidden="true"></i>
+                            <Icon name="fa6-solid:up-right-from-square" class="verify-icon" />
                           </a>
                         </div>
                       </div>
@@ -193,8 +194,9 @@ badges.sort((a, b) => new Date(b.issued_at) - new Date(a.issued_at));
       color: white;
     }
 
-    .verify-button i {
-      font-size: 0.75rem;
+    .verify-icon {
+      width: 0.75rem;
+      height: 0.75rem;
     }
 
     @media (max-width: 768px) {

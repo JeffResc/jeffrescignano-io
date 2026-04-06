@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
 import favicons from 'astro-favicons';
 
 import cloudflare from '@astrojs/cloudflare';
@@ -12,6 +13,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap(),
+    icon(),
     favicons({
       input: 'public/assets/jeff.jpg',
       appName: 'Jeff Rescignano',
