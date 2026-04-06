@@ -74,10 +74,6 @@ const absoluteImageURL = new URL(image, Astro.site).href;
 			<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		)}
 
-		<!-- Start Plausible Analytics -->
-		<script defer data-domain="jeffrescignano.io" src="https://analytics.jeffresc.dev/js/script.outbound-links.js"></script>
-		<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
-		<!-- End Plausible Analytics -->
 	</head>
 	<body>
 		<slot />
