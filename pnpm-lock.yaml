@@ -17,6 +17,9 @@ importers:
       '@astrojs/rss':
         specifier: ^4.0.18
         version: 4.0.18
+      '@astrojs/sitemap':
+        specifier: ^3.7.2
+        version: 3.7.2
       '@fortawesome/fontawesome-free':
         specifier: ^7.2.0
         version: 7.2.0
@@ -26,10 +29,6 @@ importers:
       wrangler:
         specifier: ^4.80.0
         version: 4.80.0
-    devDependencies:
-      '@astrojs/sitemap':
-        specifier: ^3.7.2
-        version: 3.7.2
 
 packages:
 
