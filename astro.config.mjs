@@ -22,6 +22,8 @@ export default defineConfig({
       theme_color: '#161616',
     }),
   ],
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'compile',
+  }),
   output: 'static',
 });
