@@ -15,7 +15,13 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter((h) => h.depth <= 3);
+
+// Estimate reading time from raw content (strip code blocks, frontmatter, and markup)
+const plainText = (post.body || '').replace(/```[\s\S]*?```/g, '').replace(/[#*\[\]()>`_~-]/g, '');
+const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 225));
 
 const allPosts = await getCollection('blog');
 const currentTags = post.data.tags || [];
@@ -83,6 +89,7 @@ const articleJsonLd = {
                       {post.data.updatedDate && (
                         <span> • Updated: {post.data.updatedDate.toDateString()}</span>
                       )}
+                      <span> • {readingTime} min read</span>
                     </div>
                     {post.data.tags && (
                       <div class="chips-container">
@@ -100,24 +107,39 @@ const articleJsonLd = {
               </article>
             </div>
 
-            {similarPosts.length > 0 && (
-              <aside class="similar-posts">
-                <div class="similar-posts-header">
-                  <div class="mini-label-white gray-color">Similar Articles</div>
+            <aside class="blog-sidebar">
+              {tocHeadings.length > 0 && (
+                <nav class="toc">
+                  <div class="mini-label-white gray-color">On this page</div>
+                  <ul class="toc-list">
+                    {tocHeadings.map((heading) => (
+                      <li class={`toc-item toc-depth-${heading.depth}`}>
+                        <a href={`#${heading.slug}`}>{heading.text}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
+
+              {similarPosts.length > 0 && (
+                <div class="similar-posts-section">
+                  <div class="similar-posts-header">
+                    <div class="mini-label-white gray-color">Similar Articles</div>
+                  </div>
+                  <div class="similar-posts-list">
+                    {similarPosts.map((similarPost) => (
+                      <a href={`/blog/${similarPost.id}/`} class="similar-post-card">
+                        <h4 class="similar-post-title">{similarPost.data.title}</h4>
+                        <p class="similar-post-description">{similarPost.data.description}</p>
+                        <div class="mini-label-white gray-color">
+                          {similarPost.data.pubDate.toDateString()}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <div class="similar-posts-list">
-                  {similarPosts.map((similarPost) => (
-                    <a href={`/blog/${similarPost.id}/`} class="similar-post-card">
-                      <h4 class="similar-post-title">{similarPost.data.title}</h4>
-                      <p class="similar-post-description">{similarPost.data.description}</p>
-                      <div class="mini-label-white gray-color">
-                        {similarPost.data.pubDate.toDateString()}
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </aside>
-            )}
+              )}
+            </aside>
           </div>
         </div>
         <Footer />
@@ -142,11 +164,51 @@ const articleJsonLd = {
         min-width: 0;
       }
 
-      .similar-posts {
+      .blog-sidebar {
         position: sticky;
         top: 0;
         width: 260px;
         flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .toc {
+        padding-bottom: 16px;
+        border-bottom: 1px solid #353535;
+      }
+
+      .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0;
+      }
+
+      .toc-item {
+        margin: 0;
+      }
+
+      .toc-item a {
+        display: block;
+        padding: 4px 0;
+        color: #a8a8a8;
+        font-size: 13px;
+        line-height: 19px;
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
+
+      .toc-item a:hover {
+        color: #fff;
+      }
+
+      .toc-depth-2 {
+        padding-left: 12px;
+      }
+
+      .toc-depth-3 {
+        padding-left: 24px;
       }
 
       .similar-posts-header {
@@ -199,9 +261,13 @@ const articleJsonLd = {
           align-items: stretch;
         }
 
-        .similar-posts {
+        .blog-sidebar {
           position: static;
           width: 100%;
+        }
+
+        .toc {
+          border-bottom: none;
         }
       }
     </style>
