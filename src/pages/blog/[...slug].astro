@@ -17,6 +17,11 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content } = await render(post);
 
+// Estimate reading time from raw content (strip code blocks, frontmatter, and markup)
+const plainText = (post.body || '').replace(/```[\s\S]*?```/g, '').replace(/[#*\[\]()>`_~-]/g, '');
+const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 225));
+
 const allPosts = await getCollection('blog');
 const currentTags = post.data.tags || [];
 
@@ -83,6 +88,7 @@ const articleJsonLd = {
                       {post.data.updatedDate && (
                         <span> • Updated: {post.data.updatedDate.toDateString()}</span>
                       )}
+                      <span> • {readingTime} min read</span>
                     </div>
                     {post.data.tags && (
                       <div class="chips-container">
