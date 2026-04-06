@@ -129,7 +129,7 @@ const articleJsonLd = {
                   <div class="similar-posts-list">
                     {similarPosts.map((similarPost) => (
                       <a href={`/blog/${similarPost.id}/`} class="similar-post-card">
-                        <h4 class="similar-post-title">{similarPost.data.title}</h4>
+                        <h3 class="similar-post-title">{similarPost.data.title}</h3>
                         <p class="similar-post-description">{similarPost.data.description}</p>
                         <div class="mini-label-white gray-color">
                           {similarPost.data.pubDate.toDateString()}
@@ -236,7 +236,7 @@ const articleJsonLd = {
         border-color: #454545;
       }
 
-      .similar-post-title {
+      h3.similar-post-title {
         color: #fff;
         font-size: 15px;
         font-weight: 500;
