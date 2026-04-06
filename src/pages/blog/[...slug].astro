@@ -101,6 +101,24 @@ const articleJsonLd = {
                   </div>
                 </header>
 
+                {tocHeadings.length > 0 && (
+                  <details class="toc-mobile">
+                    <summary class="toc-mobile-summary">
+                      <span class="mini-label-white gray-color">On this page</span>
+                      <svg class="toc-mobile-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 6L8 10L12 6" stroke="#a8a8a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </summary>
+                    <ul class="toc-list">
+                      {tocHeadings.map((heading) => (
+                        <li class={`toc-item toc-depth-${heading.depth}`}>
+                          <a href={`#${heading.slug}`}>{heading.text}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+
                 <div class="blog-post-content">
                   <Content />
                 </div>
@@ -255,6 +273,10 @@ const articleJsonLd = {
         overflow: hidden;
       }
 
+      .toc-mobile {
+        display: none;
+      }
+
       @media screen and (max-width: 991px) {
         .blog-layout {
           flex-direction: column;
@@ -267,7 +289,40 @@ const articleJsonLd = {
         }
 
         .toc {
-          border-bottom: none;
+          display: none;
+        }
+
+        .toc-mobile {
+          display: block;
+          margin-bottom: 24px;
+          padding: 12px 16px;
+          background-color: rgba(53, 53, 53, 0.24);
+          border: 1px solid #353535;
+          border-radius: 10px;
+        }
+
+        .toc-mobile-summary {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          list-style: none;
+        }
+
+        .toc-mobile-summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .toc-mobile-chevron {
+          transition: transform 0.2s ease;
+        }
+
+        .toc-mobile[open] .toc-mobile-chevron {
+          transform: rotate(180deg);
+        }
+
+        .toc-mobile .toc-list {
+          margin-top: 12px;
         }
       }
     </style>
