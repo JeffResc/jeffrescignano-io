@@ -6,6 +6,12 @@ import Footer from "../components/Footer.astro";
 
 const posts = await getCollection('blog');
 const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+function getReadingTime(body: string | undefined): number {
+  const plainText = (body || '').replace(/```[\s\S]*?```/g, '').replace(/[#*\[\]()>`_~-]/g, '');
+  const wordCount = plainText.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(wordCount / 225));
+}
 ---
 
 <Layout title="Blog | Jeff Rescignano" description="Blog posts by Jeff Rescignano on platform engineering, Kubernetes, home automation, and cloud-native tooling.">
@@ -34,7 +40,7 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
                         <p class="description">{post.data.description}</p>
                         <div class="post-meta-info">
                           <div class="mini-label-white gray-color">
-                            {post.data.pubDate.toDateString()}
+                            {post.data.pubDate.toDateString()} • {getReadingTime(post.body)} min read
                           </div>
                           {post.data.tags && (
                             <div class="chips-container">
