@@ -15,13 +15,15 @@ export default defineConfig({
     sitemap(),
     icon(),
     favicons({
-      input: 'public/assets/jeff.jpg',
+      input: 'src/assets/jeff.jpg',
       appName: 'Jeff Rescignano',
       appShortName: 'JeffResc',
       background: '#161616',
       theme_color: '#161616',
     }),
   ],
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'compile',
+  }),
   output: 'static',
 });
