@@ -188,10 +188,10 @@ ul {
 
 .w-nav-menu.is-open {
   display: block !important;
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
-  top: 92px;
+  top: 100%;
 }
 
 .w-nav-button {
@@ -219,11 +219,11 @@ ul {
 
   .w-nav[data-collapse='medium'] .w-nav-menu.is-visible {
     display: block;
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
-    top: 92px;
-    background: white;
+    top: 100%;
+    background: #1c1c1c;
     transform: translateY(-50%);
     opacity: 0;
     transition: transform 250ms ease, opacity 250ms ease;
@@ -600,6 +600,9 @@ p {
     padding-top: 18px;
     padding-bottom: 18px;
     padding-right: 28px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
 
   .nav-content {
