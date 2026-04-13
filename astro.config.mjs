@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 import favicons from 'astro-favicons';
 
-import cloudflare from '@astrojs/cloudflare';
+// import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,8 +22,8 @@ export default defineConfig({
       theme_color: '#161616',
     }),
   ],
-  adapter: cloudflare({
-    imageService: 'compile',
-  }),
-  output: 'static',
+  // adapter: cloudflare({
+    // imageService: 'compile',
+  // }),
+   output: 'static',
 });
