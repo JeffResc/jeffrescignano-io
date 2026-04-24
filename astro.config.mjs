@@ -25,5 +25,5 @@ export default defineConfig({
   adapter: cloudflare({
     imageService: 'compile',
   }),
-   output: 'static',
+  output: 'static',
 });
