@@ -24,7 +24,7 @@
     "astro-icon": "^1.1.5",
     "wrangler": "^4.81.1"
   },
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@10.33.3",
   "pnpm": {
     "onlyBuiltDependencies": ["sharp"]
   }
