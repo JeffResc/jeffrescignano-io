@@ -13,18 +13,18 @@ const { selectedItem } = Astro.props;
   data-easing="ease"
   data-easing2="ease"
   role="banner"
-  class="sidebar w-nav"
+  class="sidebar sidebar-nav"
 >
   <div class="nav-content">
-    <a href="/" class="w-nav-brand" aria-label="home">
-      <div class="niv-data">
+    <a href="/" class="sidebar-nav-brand" aria-label="home">
+      <div class="nav-data">
         <Image
           src={profileImg}
           width={48}
           height={48}
           loading="eager"
           alt="Profile picture"
-          class="niv-image"
+          class="nav-image"
         />
         <div>
           <div class="label-white">Jeff Rescignano</div>
@@ -33,11 +33,11 @@ const { selectedItem } = Astro.props;
       </div>
     </a>
 
-    <nav role="navigation" class="w-nav-menu">
+    <nav role="navigation" class="nav-menu">
       <a
         href="/"
         class={`nav-link-container w-inline-block ${
-          selectedItem === 'home' ? 'w--current' : ''
+          selectedItem === 'home' ? 'is-active' : ''
         }`}
       >
         <Icon name="fa6-solid:house" class="nav-link-icon" />
@@ -46,7 +46,7 @@ const { selectedItem } = Astro.props;
       <a
         href="/blog"
         class={`nav-link-container w-inline-block ${
-          selectedItem === 'blog' ? 'w--current' : ''
+          selectedItem === 'blog' ? 'is-active' : ''
         }`}
       >
         <Icon name="fa6-solid:feather-pointed" class="nav-link-icon" />
@@ -55,7 +55,7 @@ const { selectedItem } = Astro.props;
       <a
         href="/projects"
         class={`nav-link-container w-inline-block ${
-          selectedItem === 'projects' ? 'w--current' : ''
+          selectedItem === 'projects' ? 'is-active' : ''
         }`}
       >
         <Icon name="fa6-solid:code" class="nav-link-icon" />
@@ -64,7 +64,7 @@ const { selectedItem } = Astro.props;
       <a
         href="/certifications"
         class={`nav-link-container w-inline-block ${
-          selectedItem === 'certifications' ? 'w--current' : ''
+          selectedItem === 'certifications' ? 'is-active' : ''
         }`}
       >
         <Icon name="fa6-solid:certificate" class="nav-link-icon" />
@@ -103,7 +103,7 @@ const { selectedItem } = Astro.props;
     </nav>
 
     <div
-      class="navbar-icon-button w-nav-button"
+      class="navbar-icon-button menu-toggle"
       style="-webkit-user-select: text;"
       aria-label="menu"
       role="button"

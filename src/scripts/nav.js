@@ -1,6 +1,6 @@
 export function setupNav() {
   const navButton = document.querySelector('.navbar-icon-button');
-  const navMenu = document.querySelector('.w-nav-menu');
+  const navMenu = document.querySelector('.nav-menu');
 
   if (!navButton || !navMenu) return;
 
