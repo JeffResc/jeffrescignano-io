@@ -137,7 +137,7 @@ ul {
 }
 
 @media screen and (max-width: 767px) {
-  .w-nav-brand {
+  .sidebar-nav-brand {
     padding-left: 10px;
   }
 }
@@ -157,36 +157,36 @@ ul {
   overflow: hidden;
 }
 
-.w-nav {
+.sidebar-nav {
   z-index: 1000;
   background: #ddd;
   position: relative;
 }
 
-.w-nav:before,
-.w-nav:after {
+.sidebar-nav:before,
+.sidebar-nav:after {
   content: ' ';
   grid-area: 1 / 1 / 2 / 2;
   display: table;
 }
 
-.w-nav:after {
+.sidebar-nav:after {
   clear: both;
 }
 
-.w-nav-brand {
+.sidebar-nav-brand {
   float: left;
   color: #333;
   text-decoration: none;
   position: relative;
 }
 
-.w-nav-menu {
+.nav-menu {
   float: right;
   position: relative;
 }
 
-.w-nav-menu.is-open {
+.nav-menu.is-open {
   display: block !important;
   position: absolute;
   left: 0;
@@ -194,7 +194,7 @@ ul {
   top: 100%;
 }
 
-.w-nav-button {
+.menu-toggle {
   float: right;
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -208,16 +208,16 @@ ul {
   position: relative;
 }
 
-.w-nav-button:focus {
+.menu-toggle:focus {
   outline: 0;
 }
 
 @media screen and (max-width: 991px) {
-  .w-nav[data-collapse='medium'] .w-nav-menu {
+  .sidebar-nav[data-collapse='medium'] .nav-menu {
     display: none;
   }
 
-  .w-nav[data-collapse='medium'] .w-nav-menu.is-visible {
+  .sidebar-nav[data-collapse='medium'] .nav-menu.is-visible {
     display: block;
     position: absolute;
     left: 0;
@@ -230,18 +230,18 @@ ul {
     will-change: transform, opacity;
   }
 
-  .w-nav[data-collapse='medium'] .w-nav-menu.is-visible.is-open {
+  .sidebar-nav[data-collapse='medium'] .nav-menu.is-visible.is-open {
     transform: translateY(0);
     opacity: 1;
   }
 
-  .w-nav[data-collapse='medium'] .w-nav-button {
+  .sidebar-nav[data-collapse='medium'] .menu-toggle {
     display: block;
   }
 }
 
 @media screen and (max-width: 767px) {
-  .w-nav-brand {
+  .sidebar-nav-brand {
     padding-left: 10px;
   }
 }
@@ -343,12 +343,12 @@ p {
   line-height: 22px;
 }
 
-.niv-data {
+.nav-data {
   align-items: center;
   display: flex;
 }
 
-.niv-image {
+.nav-image {
   width: 48px;
   height: 48px;
   border: 1px solid #353535;
@@ -481,7 +481,7 @@ p {
   display: flex;
 }
 
-.nav-link-container.w--current {
+.nav-link-container.is-active {
   color: #fff;
   background-color: #2b2b2b;
   border-color: #353535;
