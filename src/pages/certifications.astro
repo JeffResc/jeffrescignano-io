@@ -119,6 +119,14 @@ badges.sort((a, b) => new Date(b.issued_at) - new Date(a.issued_at));
     </main>
   </div>
 
+  <script>
+    document.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('.verify-button')) {
+        window.posthog?.capture('certification_verified');
+      }
+    });
+  </script>
+
   <style>
     .certification-item {
       display: flex;

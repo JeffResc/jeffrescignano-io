@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import PostHog from '../components/posthog.astro';
 import '../styles/global.css';
 
 // Self-hosted fonts (eliminates Google Fonts DNS lookups)
@@ -84,6 +85,7 @@ const websiteJsonLd = {
 		{jsonLd && (
 			<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 		)}
+		<PostHog />
 
 	</head>
 	<body>

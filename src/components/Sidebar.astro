@@ -73,6 +73,7 @@ const { selectedItem } = Astro.props;
       <a
         href="https://github.com/JeffResc"
         class="nav-link-container w-inline-block"
+        data-external-destination="github"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -83,6 +84,7 @@ const { selectedItem } = Astro.props;
       <a
         href="https://www.linkedin.com/in/jeffrey-rescignano/"
         class="nav-link-container w-inline-block"
+        data-external-destination="linkedin"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -93,6 +95,7 @@ const { selectedItem } = Astro.props;
       <a
         href="https://charts.jeffresc.dev/"
         class="nav-link-container w-inline-block"
+        data-external-destination="helm_charts"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -130,6 +133,15 @@ const { selectedItem } = Astro.props;
 
   <script>
     import { setupNav } from '../scripts/nav.js';
+
+    document.addEventListener('click', (event) => {
+      const link = (event.target as Element).closest<HTMLElement>('[data-external-destination]');
+      if (!link) return;
+
+      window.posthog?.capture('external_profile_opened', {
+        destination: link.dataset.externalDestination,
+      });
+    });
 
     let cleanup: (() => void) | undefined;
     document.addEventListener('astro:page-load', () => {

@@ -35,7 +35,7 @@ const blogListJsonLd = {
           <div class="content-container">
             <div class="blog-header">
               <h1>Blog</h1>
-              <a href="/rss.xml" class="rss-link" target="_blank" rel="noopener noreferrer" aria-label="RSS Feed">
+              <a href="/rss.xml" class="rss-link" data-rss-feed target="_blank" rel="noopener noreferrer" aria-label="RSS Feed">
                 <Icon name="fa6-solid:rss" class="rss-icon" /> RSS
               </a>
             </div>
@@ -46,7 +46,7 @@ const blogListJsonLd = {
                     <div class="single-resource-content">
                       <div class="single-resource-content-top">
                         <h2>
-                          <a href={`/blog/${post.id}/`} class="blog-title-link">
+                          <a href={`/blog/${post.id}/`} class="blog-title-link" data-post-slug={post.id}>
                             {post.data.title}
                           </a>
                         </h2>
@@ -74,6 +74,24 @@ const blogListJsonLd = {
         <Footer />
       </main>
     </div>
+
+    <script>
+      document.addEventListener('click', (event) => {
+        const target = event.target as Element;
+
+        if (target.closest('[data-rss-feed]')) {
+          window.posthog?.capture('rss_feed_opened');
+          return;
+        }
+
+        const link = target.closest<HTMLElement>('.blog-title-link');
+        if (!link) return;
+
+        window.posthog?.capture('blog_article_opened', {
+          post_slug: link.dataset.postSlug,
+        });
+      });
+    </script>
 
     <style>
       .blog-header {

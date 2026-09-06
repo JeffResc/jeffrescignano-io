@@ -146,7 +146,7 @@ const articleJsonLd = {
                   </div>
                   <div class="similar-posts-list">
                     {similarPosts.map((similarPost) => (
-                      <a href={`/blog/${similarPost.id}/`} class="similar-post-card">
+                      <a href={`/blog/${similarPost.id}/`} class="similar-post-card" data-post-slug={similarPost.id}>
                         <h3 class="similar-post-title">{similarPost.data.title}</h3>
                         <p class="similar-post-description">{similarPost.data.description}</p>
                         <div class="mini-label-white gray-color">
@@ -165,6 +165,17 @@ const articleJsonLd = {
     </div>
 
 
+
+    <script>
+      document.addEventListener('click', (event) => {
+        const link = (event.target as Element).closest<HTMLElement>('.similar-post-card');
+        if (!link) return;
+
+        window.posthog?.capture('recommended_article_opened', {
+          post_slug: link.dataset.postSlug,
+        });
+      });
+    </script>
 
     <style>
       .container {

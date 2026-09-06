@@ -7,6 +7,10 @@ export function setupNav() {
   const toggleNav = () => {
     const isOpen = navMenu.classList.contains('is-open');
 
+    window.posthog?.capture('mobile_navigation_toggled', {
+      is_open: !isOpen,
+    });
+
     navMenu.classList.toggle('is-visible', !isOpen);
     setTimeout(
       () => {

@@ -39,6 +39,8 @@ jobs:
       run: pnpm run build
       env:
         NODE_ENV: production
+        PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ vars.PUBLIC_POSTHOG_PROJECT_TOKEN }}
+        PUBLIC_POSTHOG_HOST: ${{ vars.PUBLIC_POSTHOG_HOST }}
 
     - name: Deploy Preview to Cloudflare Workers
       id: deploy-preview
