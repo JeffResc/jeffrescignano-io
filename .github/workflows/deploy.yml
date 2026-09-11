@@ -42,6 +42,28 @@ jobs:
         PUBLIC_POSTHOG_PROJECT_TOKEN: ${{ vars.PUBLIC_POSTHOG_PROJECT_TOKEN }}
         PUBLIC_POSTHOG_HOST: ${{ vars.PUBLIC_POSTHOG_HOST }}
 
+    - name: Verify built pages
+      run: |
+        shopt -s globstar nullglob
+        pages=(dist/client/**/*.html)
+        if [ ${#pages[@]} -eq 0 ]; then
+          echo "::error::No HTML pages were built"
+          exit 1
+        fi
+        status=0
+        for page in "${pages[@]}"; do
+          size=$(wc -c < "$page")
+          if [ "$size" -lt 1024 ]; then
+            echo "::error file=$page::Page is only $size bytes"
+            status=1
+          elif ! head -c 15 "$page" | grep -qi '<!DOCTYPE html'; then
+            echo "::error file=$page::Page does not start with a DOCTYPE"
+            status=1
+          fi
+        done
+        echo "Checked ${#pages[@]} pages"
+        exit $status
+
     - name: Deploy Preview to Cloudflare Workers
       id: deploy-preview
       if: github.event_name == 'pull_request'

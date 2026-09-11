@@ -9,6 +9,12 @@
   "observability": {
     "enabled": true
   },
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "499bb37a5a054daa80f3ff835069a94b"
+    }
+  ],
   "routes": [
     {
       "pattern": "jeffrescignano.io",
