@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Privacy | Jeff Rescignano" description="What this website collects and how it handles analytics.">
+  <div class="content">
+    <Sidebar />
+    <main class="main" id="main">
+      <div class="container">
+        <h1>Privacy</h1>
+
+        <h2>Analytics</h2>
+        <p>
+          This site uses <a href="https://posthog.com" target="_blank" rel="noopener noreferrer">PostHog</a> for
+          analytics. PostHog receives the events listed below from your browser.
+        </p>
+
+        <h2>What is collected</h2>
+        <ul>
+          <li>Page views.</li>
+          <li>Automatic click events (PostHog autocapture).</li>
+          <li>Unhandled JavaScript errors and unhandled promise rejections.</li>
+          <li>
+            Custom events when you open a blog article, a recommended article, the RSS feed, a project repository, an
+            external profile link, or a certification verification link, and when you toggle the mobile navigation.
+          </li>
+        </ul>
+
+        <h2>Cookies and storage</h2>
+        <p>
+          PostHog is set to keep its data in memory only. It does not set cookies and does not write to localStorage or
+          sessionStorage. Each page load is treated as a new, anonymous visitor.
+        </p>
+
+        <h2>Global Privacy Control</h2>
+        <p>
+          If your browser sends the Global Privacy Control signal or Do Not Track, PostHog is not loaded and no
+          analytics events are sent.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Contact me through <a href="https://github.com/JeffResc" target="_blank" rel="noopener noreferrer">GitHub</a>.
+        </p>
+      </div>
+      <Footer />
+    </main>
+  </div>
+</Layout>
+
+<style>
+  h2 {
+    margin-top: 32px;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+</style>
