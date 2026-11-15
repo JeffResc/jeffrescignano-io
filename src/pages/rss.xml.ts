@@ -8,13 +8,22 @@ export async function GET(context: APIContext) {
     title: "Jeff Rescignano's Blog",
     description: 'Blog posts on platform engineering, Kubernetes, home automation, and cloud-native tooling.',
     site: context.site!,
+    xmlns: {
+      atom: 'http://www.w3.org/2005/Atom',
+      sy: 'http://purl.org/rss/1.0/modules/syndication/',
+    },
+    customData: [
+      `<atom:link href="${new URL('/rss.xml', context.site!).href}" rel="self" type="application/rss+xml"/>`,
+      '<sy:updatePeriod>weekly</sy:updatePeriod>',
+      '<sy:updateFrequency>1</sy:updateFrequency>',
+    ].join(''),
     items: posts
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
       .map((post) => ({
         title: post.data.title,
         pubDate: post.data.pubDate,
         description: post.data.description,
-        link: `/blog/${post.slug}/`,
+        link: `/blog/${post.id}/`,
       })),
   });
 }
