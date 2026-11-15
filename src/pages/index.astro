@@ -118,6 +118,8 @@ const personJsonLd = {
           clearInterval(rotatingInterval);
         }
 
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
         function rotateText() {
           rotatingText.classList.add('fade-out');
 
