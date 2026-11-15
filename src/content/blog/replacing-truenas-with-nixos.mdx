@@ -15,7 +15,7 @@ On its own, that's not a showstopper — SCALE itself is still open source today
 
 So I started looking at alternatives. I landed on NixOS, and this post is about why that made sense and how the migration went.
 
-### What NixOS is, briefly
+## What NixOS is, briefly
 
 If you've never used it, NixOS is a Linux distribution built on the [Nix package manager](https://nixos.org/). Instead of installing packages imperatively and accumulating state in `/etc` over time, you describe the entire system — packages, services, users, firewall rules, kernel modules, filesystems — in a single declarative configuration. You run `nixos-rebuild switch`, and Nix builds the new system as an immutable "generation" and atomically activates it. If something breaks, you reboot into the previous generation and you're back to exactly where you were.
 
@@ -28,7 +28,7 @@ A few things fall out of that model that matter for a NAS:
 
 The tradeoff is that NixOS is not point-and-click. You write Nix. You read module source. The learning curve is real. But once it's built, the day-to-day maintenance is closer to "edit a file and commit" than "SSH in and hope I remember what I did last time."
 
-### Why it fits a TrueNAS replacement
+## Why it fits a TrueNAS replacement
 
 TrueNAS's value proposition is an integrated, appliance-like experience: a web UI on top of ZFS, Samba, NFS, and a handful of apps, all stitched together and tested as a unit. What I actually used from that appliance was narrow:
 
@@ -42,7 +42,7 @@ All of that is standard Linux. NixOS has first-class modules for every single on
 
 There were also things TrueNAS made *harder* than vanilla Linux. Running [Garage](https://garagehq.deuxfleurs.fr/) (an S3-compatible object store) on TrueNAS meant a jail, a sandbox, or a VM. On NixOS it's a two-line module import. Same story for Caddy with a Cloudflare DNS plugin, Borgmatic with the ZFS snapshot hook, and custom systemd units.
 
-### Weighing the tradeoffs
+## Weighing the tradeoffs
 
 I did not take this lightly. A storage server is not where you want to experiment — it's where you want boring. Here's the honest ledger:
 
@@ -61,7 +61,7 @@ I did not take this lightly. A storage server is not where you want to experimen
 
 There wasn't a single deciding factor — it was the accumulation of all of the above. The SMART UI regression, the missing IaC story, the scale-build deprecation, the services I wanted to run that TrueNAS made harder than vanilla Linux, and the fact that I was already running NixOS on two other machines in the homelab. None of those alone would have tipped me, but taken together the case for staying got thinner every month.
 
-### Scope: what this machine does
+## Scope: what this machine does
 
 The server — and its ZFS pool — are both named `hydra`. The name comes from Greek and Roman mythology: the Lernaean Hydra was a multi-headed serpent that regrew two heads for every one cut off. It's also the name of a freshwater invertebrate biologists study precisely because it can regenerate lost body parts. Either way, the metaphor fits a ZFS pool — a disk can fail, and the pool regenerates itself around the loss.
 
@@ -77,7 +77,7 @@ The machine is a single bare-metal box with 48 GB of RAM, two NVMe drives for th
 
 Nothing exotic. The goal was a like-for-like swap of the services I actually used, plus a few things TrueNAS couldn't cleanly do.
 
-### The migration plan
+## The migration plan
 
 The plan was simple on paper:
 
@@ -91,7 +91,7 @@ The plan was simple on paper:
 
 The critical insight is that the ZFS pool is the system of record. The OS is just a thin layer of services on top. As long as I didn't touch the data disks, the "migration" was really a reinstall with the pool preserved in place.
 
-### Preserving the ZFS pool
+## Preserving the ZFS pool
 
 This is worth pausing on because it's the step that sounds risky and isn't. TrueNAS SCALE uses OpenZFS — the same implementation NixOS ships. A ZFS pool is a ZFS pool, with no TrueNAS-specific on-disk format. TrueNAS just sets pool and dataset properties like any other host would; those properties travel with the pool.
 
@@ -113,7 +113,7 @@ networking.hostId = "aeb4a130";
 
 Before touching anything, I took a fresh snapshot of the pool and confirmed I had a clean export. Because the import is a no-op for the data itself, a failed import would have meant "the NixOS install didn't work yet," not "your data is gone."
 
-### ZFS services on NixOS
+## ZFS services on NixOS
 
 With the pool imported, I set up the services that TrueNAS had handled for me. The three I cared most about were scheduled scrubs, autosnapshots, and ZED alerts:
 
@@ -159,7 +159,7 @@ boot.kernelParams = [
 ];
 ```
 
-### Samba, NFS, and sharing
+## Samba, NFS, and sharing
 
 Samba was the most finicky service to port, mostly because macOS Time Machine is extremely particular. The NixOS `services.samba.settings` module takes a straightforward mapping of `smb.conf` sections, so the share definitions translated directly from my TrueNAS exports:
 
@@ -197,7 +197,7 @@ services.nfs.server = {
 };
 ```
 
-### Garage for S3
+## Garage for S3
 
 Garage is a service TrueNAS technically supported via an add-on "app," but the integration was clunky and the upgrade path was worse. On NixOS it's genuinely three things: install the package, write a config, expose the right ports.
 
@@ -228,7 +228,7 @@ services.caddy.package = pkgs.caddy.withPlugins {
 
 This is the part where NixOS starts paying dividends — on TrueNAS, getting a custom-built Caddy with a non-standard plugin running persistently was a whole afternoon. On NixOS it's a field on a module.
 
-### Borgmatic to rsync.net
+## Borgmatic to rsync.net
 
 Off-site backups are the last line of defense, and this is actually a case where the migration *unlocked* a better setup rather than preserving an existing one. TrueNAS's "Cloud Sync Tasks" support object-storage targets like S3 and Backblaze B2, along with raw `zfs send` replication, but it had no native support for [BorgBackup](https://www.borgbackup.org/) — which offers content-defined chunking and deduplication that plain object sync just can't match for backup workloads. That gap alone was a quiet annoyance that added to the pile of reasons to move.
 
@@ -255,7 +255,7 @@ ssh_command = "ssh -i ${config.sops.secrets."borgmatic-ssh-key".path}";
 
 After the first archive completed, I verified it listed correctly from a separate machine and test-restored a handful of files. A backup you haven't restored from isn't a backup you have.
 
-### Resilient boot
+## Resilient boot
 
 TrueNAS uses a mirrored boot pool so either drive can boot the OS. I wanted the same on NixOS, which [Disko](https://github.com/nix-community/disko) makes declarative. Both NVMe drives get a 1 GB ESP and a ZFS partition; the ZFS partitions form a mirrored `rpool`. Both ESPs are registered with systemd-boot.
 
@@ -273,7 +273,7 @@ systemd.services.sync-fallback-esp = {
 };
 ```
 
-### What I lost
+## What I lost
 
 I want to be honest about the downsides I actually felt.
 
@@ -283,19 +283,19 @@ I want to be honest about the downsides I actually felt.
 
 **A community that specifically shares my exact setup.** The TrueNAS forums have a huge base of "NAS-first" users. NixOS's community is broader but less focused on home storage specifically. I've had to read more source code than forum posts, which is a skill tax worth being honest about.
 
-### What I gained
+## What I gained
 
 - **One file that describes the whole machine.** Any service, any setting, any tuning — it's all in the repo. Code review for my own infrastructure.
 - **Reboots that can't brick me.** Every generation stays on disk. Bad config? Pick the previous entry at the systemd-boot menu.
 - **Secrets I can commit.** SOPS-encrypted YAML lives in Git; sops-nix decrypts at activation.
 - **Services that didn't fit TrueNAS.** Garage, a custom Caddy build, a ZFS-aware Borgmatic schedule, Slack-bound ZED alerts — all trivial on NixOS, all awkward or impossible on TrueNAS.
 
-### Would I do it again
+## Would I do it again
 
 Yes, but with context. If you want an appliance, TrueNAS is still a defensible choice — the appliance experience is its whole reason for existing, and for many people that's exactly what they want. But if you were already looking sideways at how much of your infrastructure is owned by a single vendor's build system, the `scale-build` deprecation is a reasonable moment to reconsider.
 
 NixOS won't give you an appliance. It will give you a machine you can rebuild from a Git repo, roll back on a whim, and extend in any direction Linux supports. For a storage server — where the goal is durability, predictability, and long-term ownership — that's the right set of tradeoffs for me.
 
-### What's next
+## What's next
 
 The one piece I deliberately left out of this post is how my Kubernetes cluster consumes storage from `hydra`. On TrueNAS, that was a [democratic-csi](https://github.com/democratic-csi/democratic-csi) driver talking to the TrueNAS REST API; on NixOS it's a different driver entirely, using SSH and direct `zfs` commands. Stay tuned for a follow-up on how I leverage NAS storage from a Kubernetes cluster via NFS and `democratic-csi`.

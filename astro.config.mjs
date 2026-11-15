@@ -11,7 +11,7 @@ export default defineConfig({
   site: 'https://jeffrescignano.io',
   base: '/',
   integrations: [
-    mdx(),
+    mdx({ gfm: true }),
     sitemap(),
     icon(),
     favicons({
