@@ -11,6 +11,7 @@ export function setupNav() {
       is_open: !isOpen,
     });
 
+    navButton.setAttribute('aria-expanded', String(!isOpen));
     navMenu.classList.toggle('is-visible', !isOpen);
     setTimeout(
       () => {
@@ -20,17 +21,8 @@ export function setupNav() {
     );
   };
 
-  const handleKeydown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleNav();
-    }
-  };
-
   navButton.addEventListener('click', toggleNav);
-  navButton.addEventListener('keydown', handleKeydown);
   return () => {
     navButton.removeEventListener('click', toggleNav);
-    navButton.removeEventListener('keydown', handleKeydown);
   };
 }
