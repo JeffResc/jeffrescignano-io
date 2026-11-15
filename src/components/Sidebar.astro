@@ -12,11 +12,11 @@ const { selectedItem } = Astro.props;
   data-duration="400"
   data-easing="ease"
   data-easing2="ease"
-  role="banner"
   class="sidebar w-nav"
 >
+  <a href="#main" class="skip-link">Skip to main content</a>
   <div class="nav-content">
-    <a href="/" class="w-nav-brand" aria-label="home">
+    <a href="/" class="w-nav-brand">
       <div class="niv-data">
         <Image
           src={profileImg}
@@ -33,7 +33,7 @@ const { selectedItem } = Astro.props;
       </div>
     </a>
 
-    <nav role="navigation" class="w-nav-menu">
+    <nav id="site-nav" aria-label="Main" class="w-nav-menu">
       <a
         href="/"
         class={`nav-link-container w-inline-block ${
@@ -116,18 +116,33 @@ const { selectedItem } = Astro.props;
       </a>
     </nav>
 
-    <div
+    <button
+      type="button"
       class="navbar-icon-button w-nav-button"
-      style="-webkit-user-select: text;"
-      aria-label="menu"
-      role="button"
-      tabindex="0"
+      aria-label="Menu"
+      aria-controls="site-nav"
+      aria-expanded="false"
     >
       <Icon name="fa6-solid:bars" class="navbar-icon" />
-    </div>
+    </button>
   </div>
 
   <style>
+    .w-nav-button {
+      background: none;
+      border: 0;
+    }
+
+    @media (scripting: none) {
+      .w-nav[data-collapse='medium'] .w-nav-menu {
+        display: block;
+      }
+
+      .w-nav[data-collapse='medium'] .w-nav-button {
+        display: none;
+      }
+    }
+
     .nav-link-icon {
       width: 16px;
       height: 16px;

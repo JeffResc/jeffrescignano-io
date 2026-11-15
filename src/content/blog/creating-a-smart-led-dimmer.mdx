@@ -6,10 +6,18 @@ description: "Creating a Smart LED Dimmer to control cheap LED lights"
 tags: ['esphome', 'microcontrollers', 'homeassistant']
 ---
 
-# Introduction
+import { Image } from 'astro:assets';
+import schematicImg from '../../assets/blog/creating-a-smart-led-dimmer/schematic.png';
+import pcbFrontImg from '../../assets/blog/creating-a-smart-led-dimmer/pcb-front.png';
+import pcbBackImg from '../../assets/blog/creating-a-smart-led-dimmer/pcb-back.png';
+import renderImg from '../../assets/blog/creating-a-smart-led-dimmer/render.png';
+import finalImageImg from '../../assets/blog/creating-a-smart-led-dimmer/final-image.jpg';
+import finalImage2Img from '../../assets/blog/creating-a-smart-led-dimmer/final-image-2.jpg';
+
+## Introduction
 I frequently see [cheap battery-operated monochrome string lights](https://www.walmart.com/ip/859641125) on clearance at stores locally such as Walmart. I wanted to be able to take advantage of these deals, but most of the lighting equipment that I own is "smart" and tied into the [Home Assistant](https://home-assistant.io/) home automation system. I wanted to be able to bring these lights into my home automation system to control them more easily and tie them into my automations. There is the [QuinLED controller](https://quinled.info/), but it was a little overkill for these types of cheap monochrome string lights.
 
-# Solution Proposal
+## Solution Proposal
 I was looking for a device to satisfy the following requirements:
 
 1. The device should be able to control at least one set of string lights (bonus points for multiple sets).
@@ -20,36 +28,123 @@ I was looking for a device to satisfy the following requirements:
 
 I created the following solution.
 
-# Schematic
-<image alt="Smart LED Dimmer Schematic" src="/assets/blog/creating-a-smart-led-dimmer/schematic.png" />
+## Schematic
+<Image alt="Smart LED Dimmer Schematic" src={schematicImg} />
 
-# PCB Layout
+## PCB Layout
 <div class="flex flow-row gap-4">
-  <image alt="Smart LED Dimmer PCB Layout Front" src="/assets/blog/creating-a-smart-led-dimmer/pcb-front.png" />
-  <image alt="Smart LED Dimmer PCB Layout Back" src="/assets/blog/creating-a-smart-led-dimmer/pcb-back.png" />
+  <Image alt="Smart LED Dimmer PCB Layout Front" src={pcbFrontImg} />
+  <Image alt="Smart LED Dimmer PCB Layout Back" src={pcbBackImg} />
 </div>
 
-# Parts List
+## Parts List
 These are the parts I decided to go with for my build. It was purely based on availability and cost. I was not familiar with many of these brands (other than Sensirion) before using them, but I have not had any issues with my device.
 
-|Name                 |Designator|Footprint                     |Quantity|Manufacturer Part       |Manufacturer|Supplier|Supplier Part|
-|---------------------|----------|------------------------------|--------|------------------------|------------|--------|-------------|
-|Header-Male-2.54_1x10|H1        |HDR-TH_10P-P2.54-V-M-1        |1       |Headers Pins2.54mm1*10P |            |LCSC    |C57369       |
-|ESP32 Left           |P1        |HDR-TH_8P-P2.54-V-F-1         |1       |Female headerHDR1X8-2.54|BOOMELE     |LCSC    |C27438       |
-|ESP32 Right          |P2        |HDR-TH_8P-P2.54-V-F-1         |1       |Female headerHDR1X8-2.54|BOOMELE     |LCSC    |C27438       |
-|2N7000               |Q1,Q2     |TO-92-3_L4.9-W3.7-P1.27-L     |2       |2N7000                  |CJ          |LCSC    |C9114        |
-|100K                 |R1,R2     |R2512                         |2       |RMC2512100K1%N          |Tyohm       |LCSC    |C269364      |
-|Screw Terminal Block |U1        |CONN-TH_JL301-50004U01        |1       |JL301-50004U01          |JILN(锦凌)  |LCSC    |C1509680     |
-|100nF                |U2        |CAP-TH_L10.5-W5.0-P7.50-D1.2  |1       |-                       |Tongfeng    |LCSC    |C281835      |
-|SHTC3                |U3        |SENSORM-SMD_4P-L2.0-W2.0-P1.00|1       |SHTC3                   |Sensirion   |LCSC    |C194656      |
+<table>
+  <caption>Parts list for the Smart LED Dimmer</caption>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Designator</th>
+      <th scope="col">Footprint</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Manufacturer Part</th>
+      <th scope="col">Manufacturer</th>
+      <th scope="col">Supplier</th>
+      <th scope="col">Supplier Part</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Header-Male-2.54_1x10</td>
+      <td>H1</td>
+      <td>HDR-TH_10P-P2.54-V-M-1</td>
+      <td>1</td>
+      <td>Headers Pins2.54mm1*10P</td>
+      <td></td>
+      <td>LCSC</td>
+      <td>C57369</td>
+    </tr>
+    <tr>
+      <td>ESP32 Left</td>
+      <td>P1</td>
+      <td>HDR-TH_8P-P2.54-V-F-1</td>
+      <td>1</td>
+      <td>Female headerHDR1X8-2.54</td>
+      <td>BOOMELE</td>
+      <td>LCSC</td>
+      <td>C27438</td>
+    </tr>
+    <tr>
+      <td>ESP32 Right</td>
+      <td>P2</td>
+      <td>HDR-TH_8P-P2.54-V-F-1</td>
+      <td>1</td>
+      <td>Female headerHDR1X8-2.54</td>
+      <td>BOOMELE</td>
+      <td>LCSC</td>
+      <td>C27438</td>
+    </tr>
+    <tr>
+      <td>2N7000</td>
+      <td>Q1,Q2</td>
+      <td>TO-92-3_L4.9-W3.7-P1.27-L</td>
+      <td>2</td>
+      <td>2N7000</td>
+      <td>CJ</td>
+      <td>LCSC</td>
+      <td>C9114</td>
+    </tr>
+    <tr>
+      <td>100K</td>
+      <td>R1,R2</td>
+      <td>R2512</td>
+      <td>2</td>
+      <td>RMC2512100K1%N</td>
+      <td>Tyohm</td>
+      <td>LCSC</td>
+      <td>C269364</td>
+    </tr>
+    <tr>
+      <td>Screw Terminal Block</td>
+      <td>U1</td>
+      <td>CONN-TH_JL301-50004U01</td>
+      <td>1</td>
+      <td>JL301-50004U01</td>
+      <td>JILN(<span lang="zh">锦凌</span>)</td>
+      <td>LCSC</td>
+      <td>C1509680</td>
+    </tr>
+    <tr>
+      <td>100nF</td>
+      <td>U2</td>
+      <td>CAP-TH_L10.5-W5.0-P7.50-D1.2</td>
+      <td>1</td>
+      <td>-</td>
+      <td>Tongfeng</td>
+      <td>LCSC</td>
+      <td>C281835</td>
+    </tr>
+    <tr>
+      <td>SHTC3</td>
+      <td>U3</td>
+      <td>SENSORM-SMD_4P-L2.0-W2.0-P1.00</td>
+      <td>1</td>
+      <td>SHTC3</td>
+      <td>Sensirion</td>
+      <td>LCSC</td>
+      <td>C194656</td>
+    </tr>
+  </tbody>
+</table>
 
 Other than that, you will also need a [WeMos D1 MINI ESP32](https://docs.platformio.org/en/stable/boards/espressif32/wemos_d1_mini32.html) or [WeMos D1 ESP8266](https://www.wemos.cc/en/latest/d1/d1_mini.html). The device is designed to work with either, but I have found it to work best with the ESP32 as it is more powerful and the [ESP32 LEDC Output](https://esphome.io/components/output/ledc.html) is a much better solution than the [ESP8266 Software PWM Output](https://esphome.io/components/output/esp8266_pwm.html).
 
-# Digital Render
+## Digital Render
 This is a digital render of the board using [MeshLab](https://www.meshlab.net/).
-<image alt="Smart LED Dimmer Digital Render" src="/assets/blog/creating-a-smart-led-dimmer/render.png" />
+<Image alt="Smart LED Dimmer Digital Render" src={renderImg} />
 
-# Software
+## Software
 For the software to control the onboard ESP32 (or ESP8266), I decided to go with [ESPHome](https://esphome.io/) due to its ease of use, especially with [Home Assistant](https://home-assistant.io/). This is an example that I wrote which treats both LED outputs as one controller, that way two sets of lights can be controlled simultaneously. It can also read the value of the onboard [SHTC3](https://sensirion.com/media/documents/643F9C8E/6164081E/Sensirion_Humidity_Sensors_SHTC3_Datasheet.pdf) and report back to [Home Assistant](https://home-assistant.io/).
 
 ```yaml
@@ -134,10 +229,10 @@ output:
     # max_power: 0.60
     frequency: 1220Hz
 ```
-# Final Results
+## Final Results
 I sent the final design files to [JLCPCB](https://www.jlcpcb.com/) for production. They are by far the cheapest PCB manufacturer to my knowledge, and I am satisfied with the build quality for these types of projects. 
 <div class="flex flow-row gap-4">
-  <image alt="Smart LED Dimmer Physical Device 1" src="/assets/blog/creating-a-smart-led-dimmer/final-image.jpg" />
-  <image alt="Smart LED Dimmer Physical Device 2" src="/assets/blog/creating-a-smart-led-dimmer/final-image-2.jpg" />
+  <Image alt="Smart LED Dimmer Physical Device 1" src={finalImageImg} />
+  <Image alt="Smart LED Dimmer Physical Device 2" src={finalImage2Img} />
 </div>
   It works great for controlling a variety of lights, with Wi-Fi and dimming support, it works great for my use case. If you have any questions about the design or software, feel free to reach out at [my name]@jeffresc.dev and I'd be happy to help out.

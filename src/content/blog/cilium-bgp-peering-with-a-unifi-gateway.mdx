@@ -18,14 +18,14 @@ Here's what the setup looks like:
 - Cilium advertises LoadBalancer IPs (`192.168.100.10–254`) to the gateway via eBGP
 - LAN clients reach cluster services at those IPs directly — no NAT, no proxy
 
-### Prerequisites
+## Prerequisites
 
 - A Kubernetes cluster with Cilium installed as the CNI
 - A UniFi Gateway (UDM, UDM Pro, UDR, or USG)
 - SSH access to the UniFi Gateway
 - `kubectl` and the Cilium CLI installed on your workstation
 
-### Step 1: Enable Cilium BGP Control Plane
+## Step 1: Enable Cilium BGP Control Plane
 
 First, make sure the BGP control plane is enabled in your Cilium installation. If you're using Helm, add these values:
 
@@ -51,7 +51,7 @@ Wait for the Cilium pods to restart:
 kubectl -n kube-system rollout status daemonset/cilium
 ```
 
-### Step 2: Create a LoadBalancer IP Pool
+## Step 2: Create a LoadBalancer IP Pool
 
 Cilium needs a pool of IPs to assign to `LoadBalancer` services. These IPs must be routable on your LAN — pick a range that doesn't overlap with DHCP or other static assignments.
 
@@ -74,7 +74,7 @@ Apply it:
 kubectl apply -f ip-pool.yaml
 ```
 
-### Step 3: Configure Cilium BGP Resources
+## Step 3: Configure Cilium BGP Resources
 
 We need three resources to tell Cilium how to advertise routes and peer with the gateway. Create `bgp.yaml` with all three:
 
@@ -140,7 +140,7 @@ Apply everything:
 kubectl apply -f bgp.yaml
 ```
 
-### Step 4: Configure BGP on the UniFi Gateway
+## Step 4: Configure BGP on the UniFi Gateway
 
 As of UniFi Network 10.2.105, BGP configuration is available in the UI under **Policy Engine > Policy Table > Dynamic Routing > BGP**. The gateway runs FRR (Free Range Routing) under the hood, and the UI lets you upload a configuration file directly.
 
@@ -210,7 +210,7 @@ Then in the UniFi Network UI, navigate to **Policy Engine > Policy Table > Dynam
 
 ![UniFi BGP configuration menu](../../assets/blog/cilium-bgp-peering-with-a-unifi-gateway/bgp-menu.png)
 
-### Step 5: Deploy a Test Service
+## Step 5: Deploy a Test Service
 
 Let's deploy a simple nginx service to verify the whole pipeline works.
 
@@ -261,7 +261,7 @@ kubectl apply -f nginx-test.yaml
 
 Cilium will assign an IP from the pool and begin advertising it to the gateway via BGP.
 
-### Step 6: Verify Everything Works
+## Step 6: Verify Everything Works
 
 ### Check BGP peering status
 

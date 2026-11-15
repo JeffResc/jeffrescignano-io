@@ -11,15 +11,15 @@ export default defineConfig({
   site: 'https://jeffrescignano.io',
   base: '/',
   integrations: [
-    mdx(),
+    mdx({ gfm: true }),
     sitemap(),
     icon(),
     favicons({
       input: 'src/assets/jeff.jpg',
-      appName: 'Jeff Rescignano',
-      appShortName: 'JeffResc',
+      name: 'Jeff Rescignano',
+      short_name: 'JeffResc',
       background: '#161616',
-      theme_color: '#161616',
+      themes: ['#161616'],
     }),
   ],
   adapter: cloudflare({
