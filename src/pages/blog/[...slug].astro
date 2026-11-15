@@ -142,7 +142,7 @@ const articleJsonLd = {
               {similarPosts.length > 0 && (
                 <div class="similar-posts-section">
                   <div class="similar-posts-header">
-                    <div class="mini-label-white gray-color">Similar Articles</div>
+                    <h2 class="mini-label-white gray-color similar-posts-title">Similar Articles</h2>
                   </div>
                   <div class="similar-posts-list">
                     {similarPosts.map((similarPost) => (
@@ -242,6 +242,10 @@ const articleJsonLd = {
 
       .similar-posts-header {
         margin-bottom: 16px;
+      }
+
+      h2.similar-posts-title {
+        margin: 0;
       }
 
       .similar-posts-list {
