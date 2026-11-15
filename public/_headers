@@ -1,3 +1,12 @@
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8
+
+/blog/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/*
+  Link: </llms.txt>; rel="describedby"; type="text/markdown"; title="Site index for LLMs", </sitemap-index.xml>; rel="sitemap"; type="application/xml", </rss.xml>; rel="alternate"; type="application/rss+xml"; title="Blog RSS feed"
+
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
